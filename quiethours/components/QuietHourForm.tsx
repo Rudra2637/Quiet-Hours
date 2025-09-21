@@ -97,19 +97,7 @@ export function QuietHourForm({ isOpen, onClose, onSubmit, initialData }: QuietH
             />
           </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description (Optional)
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              placeholder="What will you be studying or working on?"
-              rows={3}
-            />
-          </div>
+          
 
           {/* Time Range */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -141,90 +129,10 @@ export function QuietHourForm({ isOpen, onClose, onSubmit, initialData }: QuietH
           </div>
 
           {/* Notification Settings */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Bell className="w-4 h-4 inline mr-1" />
-              Notify Before (minutes)
-            </label>
-            <select
-              value={formData.notify_before_minutes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notify_before_minutes: parseInt(e.target.value) }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-            >
-              <option value={5}>5 minutes</option>
-              <option value={10}>10 minutes</option>
-              <option value={15}>15 minutes</option>
-              <option value={20}>20 minutes</option>
-              <option value={30}>30 minutes</option>
-              <option value={60}>1 hour</option>
-            </select>
-          </div>
+          
 
           {/* Recurring Settings */}
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                id="recurring"
-                checked={formData.recurring.enabled}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  recurring: { ...prev.recurring, enabled: e.target.checked }
-                }))}
-                className="mr-2"
-              />
-              <label htmlFor="recurring" className="text-sm font-medium text-gray-700">
-                <Repeat className="w-4 h-4 inline mr-1" />
-                Recurring Schedule
-              </label>
-            </div>
-
-            {formData.recurring.enabled && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Frequency
-                  </label>
-                  <select
-                    value={formData.recurring.frequency}
-                    onChange={(e) => setFormData(prev => ({
-                      ...prev,
-                      recurring: { ...prev.recurring, frequency: e.target.value as any }
-                    }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-
-                {formData.recurring.frequency === 'weekly' && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Days of Week
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {dayNames.map((day, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => handleDayToggle(index)}
-                          className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                            formData.recurring.days_of_week.includes(index)
-                              ? 'bg-indigo-600 text-white'
-                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                          }`}
-                        >
-                          {day}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          
 
           {/* Submit Buttons */}
           <div className="flex gap-3 pt-4">

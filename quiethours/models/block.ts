@@ -17,6 +17,10 @@ const BlockSchema = new mongoose.Schema({
         type: Date, 
         required: true 
     },
+    reminderSent: { 
+        type: Boolean, 
+        default: false 
+    },
     createdAt: { 
         type: Date, 
         default: Date.now 

@@ -1,142 +1,98 @@
 "use client"
-import React, { useState } from 'react'
-import axios from "axios";
-import { useEffect } from "react";
-import { Bell, Calendar, Clock, Plus, TrendingUp } from 'lucide-react';
-import { QuietHourForm } from '@/components/QuietHourForm';
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import { Bell, Calendar, Clock, Plus, TrendingUp } from "lucide-react"
+import { QuietHourForm } from "@/components/QuietHourForm"
 
-const page = () => {
+type Block = {
+  _id: string
+  title: string
+  startTime: string
+  endTime: string
+  reminderSent: boolean   // new field
+}
 
+const Page = () => {
   const [showForm, setShowForm] = useState(false)
-  const handleCloseForm = () => {
-    setShowForm(false)
+
+  const handleCloseForm = () => setShowForm(false)
+  
+
+const [block, setBlock] = useState<Block[]>([])
+
+
+
+  const handleFormSubmit = async (formData: { title: string; start_time: string; end_time: string }) => {
+    try {
+      const response = await axios.post("/api/create-block", formData) // send form data to API
+      console.log("Quiet hour created:", response.data)
+
+      // Close modal after successful save
+      setShowForm(false)
+      const result = await axios.get("/api/get-blocks")
+      setBlock(result.data)
+
+    } catch (error) {
+      console.error("Error creating quiet hour:", error)
+    }
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("/api/get-blocks")
+        setBlock(response.data)
+        
+      } catch (error) {
+          console.error("Error in fetching blocks: ",error)
+      }
+    }
+    fetchData()
+  },[]) 
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Calendar className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Today</p>
-                <p className="text-2xl font-bold text-gray-900">todayQuietHours</p>
-              </div>
+      {/* Stats Cards */}
+      <div className="">Your Quiet Hours</div>
+      {block.length !== 0 ? (
+        block.map((item,id) => (
+          <div key={item._id} className="p-4 mb-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div className="font-semibold">{item.title}</div>
+            <div>{new Date(item.startTime).toLocaleString()}</div>
+            <div>{new Date(item.endTime).toLocaleString()}</div>
+            <div className="flex items-center mt-2 text-sm">
+              <Bell className="w-4 h-4 mr-1" />
+              {item.reminderSent ? (
+                <span className="text-green-600 font-medium">Reminder sent</span>
+              ) : (
+                <span className="text-yellow-600 font-medium">Reminder pending</span>
+              )}
             </div>
           </div>
+        ))
+      )
+      :(<div>No things made make one now</div>)}
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">This Week</p>
-                <p className="text-2xl font-bold text-gray-900">thisWeek Quiet Hours</p>
-              </div>
-            </div>
-          </div>
+      {/* Quick Actions */}
+      <div className="flex items-center justify-between mb-8">
+        <button
+          onClick={() => setShowForm(true)}
+          className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Schedule New Session
+        </button>
+      </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Bell className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Sessions</p>
-                <p className="text-2xl font-bold text-gray-900">Hello here is quietHours.length</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <QuietHourForm isOpen={showForm} onClose={handleCloseForm} onSubmit={handleFormSubmit} />
 
-        {/* Quick Actions */}
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Your Quiet Hours</h2>
-          <button
-            onClick={() => setShowForm(true)}
-            className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg hover:shadow-xl"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Schedule New Session
-          </button>
-        </div>
-        {showForm && <QuietHourForm
-          isOpen={showForm}
-          onClose={handleCloseForm}
-          onSubmit={async (data) => {
-            try {
-              // POST new quiet hour to your API
-              await axios.post("/api/blocks", data);
-
-              // (optional) re-fetch or refresh the list of blocks
-              // fetchQuietHours();
-
-            } catch (err) {
-              console.error("Failed to save quiet hour", err);
-            }
-          }}
-          />
-        }
-
-        {/* Upcoming Sessions */}
-        {/* {upcomingQuietHours.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Sessions</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {upcomingQuietHours.map(quietHour => (
-                <QuietHourCard
-                  key={quietHour._id}
-                  quietHour={quietHour}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onSendNotification={sendNotificationEmail}
-                />
-              ))}
-            </div>
-          </div>
-        )} */}
-
-        {/* All Sessions */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">All Sessions</h3>
-          {/* {quietHours.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-              <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No quiet hours scheduled</h3>
-              <p className="text-gray-600 mb-6">
-                Create your first quiet hour to start managing your focused study time.
-              </p>
-              <button
-                // onClick={() => setShowForm(true)}
-                className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Schedule Your First Session
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {quietHours.map(quietHour => (
-                <QuietHourCard
-                  key={quietHour._id}
-                  quietHour={quietHour}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onSendNotification={sendNotificationEmail}
-                />
-              ))}
-            </div>
-          )} */}
-        </div>
-      </main>
+      {/* Later you’ll fetch and list quiet hours here */}
+    </main>
   )
 }
 
-export default page
+export default Page
+
 
 
 
