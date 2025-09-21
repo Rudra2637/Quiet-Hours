@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import Block from "@/models/block";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server"; // adjust path based on folder structure
+import { createClient } from "@/lib/supabase/server"; 
 
 export async function GET() {
   try {

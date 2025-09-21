@@ -9,7 +9,7 @@ type Block = {
   title: string
   startTime: string
   endTime: string
-  reminderSent: boolean   // new field
+  reminderSent: boolean  
 }
 
 const Page = () => {
@@ -24,10 +24,10 @@ const [block, setBlock] = useState<Block[]>([])
 
   const handleFormSubmit = async (formData: { title: string; start_time: string; end_time: string }) => {
     try {
-      const response = await axios.post("/api/create-block", formData) // send form data to API
+      const response = await axios.post("/api/create-block", formData) 
       console.log("Quiet hour created:", response.data)
 
-      // Close modal after successful save
+      
       setShowForm(false)
       const result = await axios.get("/api/get-blocks")
       setBlock(result.data)
@@ -52,7 +52,7 @@ const [block, setBlock] = useState<Block[]>([])
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Stats Cards */}
+     
       <div className="">Your Quiet Hours</div>
       {block.length !== 0 ? (
         block.map((item,id) => (
@@ -73,7 +73,7 @@ const [block, setBlock] = useState<Block[]>([])
       )
       :(<div>No things made make one now</div>)}
 
-      {/* Quick Actions */}
+      
       <div className="flex items-center justify-between mb-8">
         <button
           onClick={() => setShowForm(true)}
@@ -86,7 +86,7 @@ const [block, setBlock] = useState<Block[]>([])
 
       <QuietHourForm isOpen={showForm} onClose={handleCloseForm} onSubmit={handleFormSubmit} />
 
-      {/* Later you’ll fetch and list quiet hours here */}
+     
     </main>
   )
 }

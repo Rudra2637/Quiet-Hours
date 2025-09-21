@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/dbConnect";
 import block from "@/models/block";
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server"; // adjust path if needed
+import { createClient } from "@/lib/supabase/server"; 
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       title,
       startTime: start_time,
       endTime: end_time,
-      reminderSent: false,   // ensure default at creation
+      reminderSent: false,   
     });
 
     return NextResponse.json(blockCreate, { status: 201 });
